@@ -26,27 +26,48 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(asset){
+exports.readListOfUrls = function(asset, callback){
   // is the url in the list?
   if( asset === 'home') {
-    return exports.paths['home'];
+    callback(exports.paths['home']);
+  } else {
+    // if in list, return the asset
+    exports.isUrlInList( asset, function(data){
+      console.log('google? ' + data);
+      // asset = asset.substring(4,asset.length);
+      var listArray = data.toString().split('\n');
+      console.log(listArray);
+      for ( var i = 0; i < listArray.length; i++ ){
+        console.log(asset, listArray[i], typeof listArray[i] );
+        if ( listArray[i] === asset ){
+          callback(exports.paths['archivedSites'] + asset);
+        } else {
+          // if not found, do something else;
+        }
+      }
+    });
   }
-
-  //
-    //  No: archive the url, download it and return it
-    //  YES: is url archived?
-      //    Yes: return the archive
-      //    No: download url and then return
 };
 
-exports.isUrlInList = function(){
-
+exports.isUrlInList = function(asset, callback){
+  fs.readFile(exports.paths['list'], function(err, data) {
+    if(err) { throw err; }
+    callback(data);
+  });
 };
 
 exports.addUrlToList = function(){
 };
 
 exports.isURLArchived = function(asset){
+  // var fullPath = exports.paths['archivedSites'] + asset;
+  // console.log("Full Path : " + fullPath);
+  // fs.exists( fullPath , function(exists) {
+  //   if (exists) {
+  //     console.log('Exists');
+  //     return true;
+  //   }
+  // });
 };
 
 exports.downloadUrls = function(){

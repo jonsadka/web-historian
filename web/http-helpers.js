@@ -14,27 +14,31 @@ exports.sendResponse = function(req, res, statusCode) {
   statusCode = statusCode || 200;
   res.writeHead(statusCode, headers);
 
-  // console.log("Desired url: " +req.url);
   if ( req.url === '/' ){
     var path = 'home';
   } else {
     var path = req.url;
   }
 
-  this.serveAssets(res, path, res.end);
+  console.log("Desired url: " + path);
+  archive.readListOfUrls(path, function(fullPath) {
+    exports.serveAssets(fullPath, res.end);
+  });
 
 };
 
 exports.send404 = function(res) {
-  exports.sendResponse(res, "Not Found", 404);
+  statusCode = 404;
+  res.writeHead(statusCode, headers)
+  res.end("Not Found");
 };
 
-exports.serveAssets = function(res, asset, callback) {
+exports.serveAssets = function(asset, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
-  var collectedAsset = archive.readListOfUrls(asset)
 
-  fs.readFile(collectedAsset, 'binary', function (err, data) {
+  fs.readFile(asset, 'binary', function (err, data) {
+    console.log('collected asset: ',asset);
     if(err) { throw err; }
     callback(data);
   });

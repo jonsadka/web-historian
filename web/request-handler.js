@@ -8,13 +8,13 @@ var handleCORS = function(req, res) {
 };
 
 var addToArchive = function(req, res) {
-  console.log('POST REQUEST CALLED??');
+  // console.log('POST REQUEST CALLED??');
 };
 
 var getFromArchive = function(req, res) {
-  console.log('GET REQUEST CALLED');
+  // console.log('GET REQUEST CALLED');
   httpHelp.sendResponse(req, res);
-  console.log('GET REQUEST ENDED');
+  // console.log('GET REQUEST ENDED');
 };
 
 var actionMap = {

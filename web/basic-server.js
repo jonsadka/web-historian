@@ -14,15 +14,16 @@ var server = http.createServer(function(req, res) {
 
   var parsedUrl = url.parse(req.url);
 
-  // console.log('This is the route: ' + parsedUrl);
+  console.log('This is the route: ' + parsedUrl);
+  var route = routeMap[parsedUrl.pathname];
 
   // siteHandler(req, res, parsedUrl);
-
-  var route = routeMap[parsedUrl.pathname];
-  if(route) {
+  if ( (parsedUrl.pathname.substring(0,4) === '/www') || route ){
+    // console.log("False :(");
     route(req, res, parsedUrl.pathname);
   } else {
-    utils.send404(res);
+    // console.log("FALSE BABY!");
+    siteHandler.send404(res);
   }
 
 });
