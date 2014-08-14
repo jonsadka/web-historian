@@ -4,32 +4,32 @@ var archive = require('../helpers/archive-helpers');
 // require more modules/folders here!
 
 var handleCORS = function(req, res) {
-  httpHelp.sendResponse(res);
+  httpHelp.getResponse(res);
 };
 
-var addToArchive = function(req, res) {
-  // console.log('POST REQUEST CALLED??');
+var postRequest = function(req, res) {
+  httpHelp.postResponse(req, res);
 };
 
-var getFromArchive = function(req, res) {
-  // console.log('GET REQUEST CALLED');
-  httpHelp.sendResponse(req, res);
-  // console.log('GET REQUEST ENDED');
+var getRequest = function(req, res) {
+  httpHelp.getResponse(req, res);
 };
 
-var actionMap = {
-  'GET': getFromArchive,
-  'POST': addToArchive,
+actionMap = {
+  'GET': getRequest,
+  'POST': postRequest,
   'OPTIONS': handleCORS
 };
 
 exports.handleRequest = function (req, res) {
   console.log('Serving request type ' + req.method + ' for url ' + req.url);
-  //res.end(archive.paths.list);
+
   var action = actionMap[req.method];
-  if(action) {
+
+  if( action ) {
     action(req, res);
   } else {
     httpHelp.send404(res);
   }
+
 };

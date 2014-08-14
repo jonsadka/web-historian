@@ -23,26 +23,20 @@ exports.initialize = function(pathsObj){
   });
 };
 
-// The following function names are provided to you to suggest how you might
-// modularize your code. Keep it clean!
-
-exports.readListOfUrls = function(asset, callback){
+exports.readListOfUrls = function(req, res, asset, callback, failCallback){
   // is the url in the list?
   if( asset === 'home') {
     callback(exports.paths['home']);
   } else {
     // if in list, return the asset
     exports.isUrlInList( asset, function(data){
-      console.log('google? ' + data);
-      // asset = asset.substring(4,asset.length);
       var listArray = data.toString().split('\n');
-      console.log(listArray);
       for ( var i = 0; i < listArray.length; i++ ){
-        console.log(asset, listArray[i], typeof listArray[i] );
         if ( listArray[i] === asset ){
           callback(exports.paths['archivedSites'] + asset);
         } else {
           // if not found, do something else;
+          failCallback(req, res);
         }
       }
     });
@@ -50,13 +44,18 @@ exports.readListOfUrls = function(asset, callback){
 };
 
 exports.isUrlInList = function(asset, callback){
-  fs.readFile(exports.paths['list'], function(err, data) {
+  fs.readFile(exports.paths['list'], 'binary', function(err, data) {
     if(err) { throw err; }
     callback(data);
   });
 };
 
-exports.addUrlToList = function(){
+exports.addUrlToList = function(req, res, asset, callback){
+  fs.writeFile(exports.paths['list'], asset.substring(1), function(err, data) {
+    if(err) { throw err; }
+    console.log('success!');
+    callback(data);
+  });
 };
 
 exports.isURLArchived = function(asset){
@@ -70,5 +69,6 @@ exports.isURLArchived = function(asset){
   // });
 };
 
-exports.downloadUrls = function(){
+exports.downloadUrls = function(asset){
+  console.log('Download Beginning');
 };

@@ -10,9 +10,24 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-exports.sendResponse = function(req, res, statusCode) {
-  statusCode = statusCode || 200;
-  res.writeHead(statusCode, headers);
+exports.postResponse = function(req, res){
+  res.writeHead(302, headers);
+
+  var path = req.url;
+
+  console.log('path: ', path)
+
+  archive.addUrlToList(req, res, path, archive.downloadUrls);
+
+  // by default, no need to check home since this is a post request
+  // archive.readListOfUrls(req.url, function(fullPath) {
+    // exports.serveAssets(fullPath, res.end);
+  // });
+
+};
+
+exports.getResponse = function(req, res) {
+  res.writeHead(200, headers);
 
   if ( req.url === '/' ){
     var path = 'home';
@@ -20,11 +35,17 @@ exports.sendResponse = function(req, res, statusCode) {
     var path = req.url;
   }
 
-  console.log("Desired url: " + path);
-  archive.readListOfUrls(path, function(fullPath) {
-    exports.serveAssets(fullPath, res.end);
-  });
+  archive.readListOfUrls(req, res, path, function(fullPath) {
+    exports.serveAssets(fullPath, res.end.bind(res));
+  }, exports.postResponse);
 
+};
+
+exports.serveAssets = function(asset, callback) {
+  fs.readFile(asset, 'binary', function (err, data) {
+    if(err) { throw err; };
+    callback(data);
+  });
 };
 
 exports.send404 = function(res) {
@@ -32,17 +53,3 @@ exports.send404 = function(res) {
   res.writeHead(statusCode, headers)
   res.end("Not Found");
 };
-
-exports.serveAssets = function(asset, callback) {
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...), css, or anything that doesn't change often.)
-
-  fs.readFile(asset, 'binary', function (err, data) {
-    console.log('collected asset: ',asset);
-    if(err) { throw err; }
-    callback(data);
-  });
-
-};
-
-
