@@ -12,7 +12,8 @@ var _ = require('underscore');
 exports.paths = {
   'siteAssets' : path.join(__dirname, '../web/public'),
   'archivedSites' : path.join(__dirname, '../archives/sites'),
-  'list' : path.join(__dirname, '../archives/sites.txt')
+  'list' : path.join(__dirname, '../archives/sites.txt'),
+  'home': path.join(__dirname, '../web/public/index.html')
 };
 
 // Used for stubbing paths for jasmine tests, do not modify
@@ -25,16 +26,27 @@ exports.initialize = function(pathsObj){
 // The following function names are provided to you to suggest how you might
 // modularize your code. Keep it clean!
 
-exports.readListOfUrls = function(){
+exports.readListOfUrls = function(asset){
+  // is the url in the list?
+  if( asset === 'home') {
+    return exports.paths['home'];
+  }
+
+  //
+    //  No: archive the url, download it and return it
+    //  YES: is url archived?
+      //    Yes: return the archive
+      //    No: download url and then return
 };
 
 exports.isUrlInList = function(){
+
 };
 
 exports.addUrlToList = function(){
 };
 
-exports.isURLArchived = function(){
+exports.isURLArchived = function(asset){
 };
 
 exports.downloadUrls = function(){
