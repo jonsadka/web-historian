@@ -8,15 +8,10 @@
     "http-request": "^0.6.3"
   },
   "devDependencies": {
-    "chai": "^1.9.0",
-    "cron": "^1.0.3",
-    "mocha": "^1.21.4",
-    "q": "^1.0.0",
     "request": "^2.34.0",
+    "chai": "^1.9.0",
     "underscore": "^1.6.0",
-    "jquery": "1.11.0"
-  },
-  "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/test.js"
+    "q": "^1.0.0",
+    "cron": "^1.0.3"
   }
 }

@@ -1,35 +1,60 @@
 var path = require('path');
-var httpHelp = require("./http-helpers");
 var archive = require('../helpers/archive-helpers');
-// require more modules/folders here!
+var httpHelpers = require('./http-helpers');
+var fs = require('fs');
+var url = require('url');
 
-var handleCORS = function(req, res) {
-  httpHelp.getResponse(res);
-};
+var getHandler = function(req, res){
+  pathname = url.parse(req.url).pathname;
 
-var postRequest = function(req, res) {
-  httpHelp.postResponse(req, res);
-};
-
-var getRequest = function(req, res) {
-  httpHelp.getResponse(req, res);
-};
-
-actionMap = {
-  'GET': getRequest,
-  'POST': postRequest,
-  'OPTIONS': handleCORS
-};
-
-exports.handleRequest = function (req, res) {
-  console.log('Serving request type ' + req.method + ' for url ' + req.url);
-
-  var action = actionMap[req.method];
-
-  if( action ) {
-    action(req, res);
-  } else {
-    httpHelp.send404(res);
+  if (pathname === '/'){
+    pathname = '/index.html';
   }
 
+  httpHelpers.serveAsset(res, pathname, function(){
+    archive.isUrlInList(pathname.slice(1), function(isInList){
+      if (isInList){
+        httpHelpers.sendRedirect(res, 'loading.html');
+      } else {
+        httpHelpers.send404(res);
+      }
+    });
+  });
 };
+
+var postHandler = function(req, res){
+  httpHelpers.bodyParser(req, res, function(data){
+    // url is received as a key/value string: 'url=www.zombo.com'
+    var url = data.split('=')[1];
+    archive.isUrlArchived(url, function(isArchived){
+      if (isArchived){
+        httpHelpers.sendRedirect(res, url);
+        return;
+      }
+
+      archive.isUrlInList(url, function(isInList){
+        if (!isInList)  {
+          archive.addUrlToList(url);
+        }
+
+        httpHelpers.sendRedirect(res, 'loading.html');
+      });
+    });
+  });
+};
+
+
+var handleRequest = function (req, res) {
+  var router = {
+    'GET' : getHandler,
+    'POST' : postHandler
+  };
+
+  if (router[req.method]) {
+    router[req.method](req, res);
+  } else {
+    httpHelpers.send404(res);
+  }
+};
+
+exports.handleRequest = handleRequest;

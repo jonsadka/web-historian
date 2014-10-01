@@ -1,28 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-  <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
+  <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
   Enter a URL here:
-  <form method="GET">
+  <form method="POST">
     <input type="input" name="url"></input>
   </form>
-  <script>
-    $('form').on('submit', function() {
-      var request = $('form input').val().trim();
-      $.ajax({
-        type: "GET",
-        url: "127.0.0.1:8080",
-        dataType: "text/html",
-        contentType: "application/json",
-        data: request
-      })
-      .done(function() {
-        console.log("yessir");
-      });
-    });
-  </script>
 </body>
 </html>
